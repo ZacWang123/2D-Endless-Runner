@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,11 +6,15 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     Rigidbody2D rb;
+    Boolean gravitySwitch;
+    float gravity = 70f;
+    float jumpVelocity = 300f;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();   
+        rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = gravity;
     }
 
 
@@ -18,7 +23,28 @@ public class Player : MonoBehaviour
     {
         if (Input.GetButton("Jump")) 
         {
-            rb.velocity = new Vector3(0, 50f, 0);
+            if (gravitySwitch)
+            {
+                rb.velocity = new Vector3(0, -jumpVelocity, 0);
+            }
+            else if (!gravitySwitch)
+            {
+                rb.velocity = new Vector3(0, jumpVelocity, 0);
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            gravitySwitch = !gravitySwitch;
+
+            if (gravitySwitch)
+            {
+                rb.gravityScale = -gravity;
+            }
+            else if (!gravitySwitch)
+            {
+                rb.gravityScale = gravity;
+            }
         }
     }
 }
