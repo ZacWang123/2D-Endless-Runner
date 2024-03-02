@@ -1,50 +1,102 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    Rigidbody2D rb;
     Boolean gravitySwitch;
-    float gravity = 70f;
-    float jumpVelocity = 300f;
+    Boolean isGrounded;
+    Boolean switchGravity;
+    Vector2 velocity;
+    float gravity = 1500;
+    float jumpVelocity = 450;
+    float groundHeight = -80;
+    float ceilingHeight = 80;
 
     // Start is called before the first frame update
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = gravity;
+        //GameObject ground = GameObject.Find("Ground");
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetButton("Jump")) 
+        if (isGrounded)
         {
-            if (gravitySwitch)
+            if (Input.GetButton("Jump"))
             {
-                rb.velocity = new Vector3(0, -jumpVelocity, 0);
-            }
-            else if (!gravitySwitch)
-            {
-                rb.velocity = new Vector3(0, jumpVelocity, 0);
+                isGrounded = false;
+                velocity.y = jumpVelocity;
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.W))
+        /*
+        if (switchGravity)
         {
-            gravitySwitch = !gravitySwitch;
-
-            if (gravitySwitch)
+            if (Input.GetKeyDown(KeyCode.W))
             {
-                rb.gravityScale = -gravity;
-            }
-            else if (!gravitySwitch)
-            {
-                rb.gravityScale = gravity;
+                switchGravity = false;
             }
         }
+        */
+    }
+
+    private void FixedUpdate()
+    {
+        Vector2 pos = transform.position;
+
+        if (!isGrounded)
+        {
+            pos.y += velocity.y * Time.fixedDeltaTime;
+            velocity.y += -gravity * Time.fixedDeltaTime;
+
+            if (pos.y <= groundHeight)
+            {
+                pos.y = groundHeight;
+                isGrounded = true;
+            }
+
+            /*
+            if (gravitySwitch)
+            {
+                if (pos.y >= groundHeight)
+                {
+                    isGrounded = true;
+                }
+            }
+
+            if (!gravitySwitch)
+            {
+                pos.y += velocity.y * Time.fixedDeltaTime;
+                velocity.y += gravity * Time.fixedDeltaTime;
+
+                if (pos.y <= groundHeight)
+                {
+                    isGrounded = true;
+                }
+            }
+            */
+
+            transform.position = pos;
+            }
+
+        /*
+        {
+        gravitySwitch = !gravitySwitch;
+
+        if (gravitySwitch)
+        {
+            rb.gravityScale = -gravity;
+        }
+        else if (!gravitySwitch)
+        {
+            rb.gravityScale = gravity;
+        }
+        }
+        */
     }
 }
