@@ -6,66 +6,50 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    Boolean isGrounded;
-    Boolean switchGravity;
-    Vector2 velocity;
-    float gravity = 900;
-    float jumpVelocity = 300;
-    float groundHeight = -80;
-    float ceilingHeight = 80;
+    float jump = 400;
+    bool gravitySwitch;
+    bool isGrounded;
+    Rigidbody2D rb;
+
+    private void Awake()
+    {
+        rb = GetComponent<Rigidbody2D>();
+    }
 
     void Start()
     {
+         
     }
 
     void Update()
     {
-        if (isGrounded)
+        if (Input.GetButton("Jump") && isGrounded) 
         {
-            if (Input.GetButton("Jump"))
-            {
-                isGrounded = false;
-                velocity.y = jumpVelocity;
-            }
+            rb.velocity = Vector2.zero;
+            rb.AddForce(Vector2.up * jump, ForceMode2D.Impulse);
         }
 
-        if (switchGravity)
-            if (Input.GetKeyDown(KeyCode.W))
-            {
-                switchGravity = false; 
-                isGrounded = false;
-                gravity = gravity * -1;
-                velocity.y = jumpVelocity;
-                jumpVelocity = jumpVelocity * -1;
-            }
-
-        if (isGrounded)
+        if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
-            switchGravity = true;
+            gravitySwitch = !gravitySwitch;
+            rb.gravityScale = rb.gravityScale * -1;
+            jump = jump * -1;
         }
     }
 
-    private void FixedUpdate()
+    void OnCollisionEnter2D(Collision2D other) 
     {
-        Vector2 pos = transform.position;
-
-        if (!isGrounded)
+        if (other.gameObject.CompareTag("Ground"))
         {
-            pos.y += velocity.y * Time.fixedDeltaTime;
-            velocity.y -= gravity * Time.fixedDeltaTime;
-
-            if (pos.y <= groundHeight)
-            {
-                pos.y = groundHeight;
-                isGrounded = true;
-            }
-
-            if (pos.y >= ceilingHeight)
-            {
-                pos.y = ceilingHeight;
-                isGrounded = true;
-            }
+            isGrounded = true;
         }
-        transform.position = pos;
+    }
+
+    private void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Ground"))
+        {
+            isGrounded = false;
+        }
     }
 }
