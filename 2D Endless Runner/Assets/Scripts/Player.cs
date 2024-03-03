@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -10,9 +11,9 @@ public class Player : MonoBehaviour
     SpriteRenderer rend;
     Sprite flippedPlayer, crouchedPlayer, standingPlayer, flippedCrouchedPlayer;
 
-    float jump = 400;
-    bool gravitySwitch;
-    bool isGrounded;
+    public float jump = 300;
+    public bool gravitySwitch;
+    public bool isGrounded;
 
     private void Awake()
     {
@@ -55,10 +56,12 @@ public class Player : MonoBehaviour
         {
             if (gravitySwitch)
             {
+                GetComponent<BoxCollider2D>().size = new Vector2(15, 10);
                 rend.sprite = flippedCrouchedPlayer;
             }
             else if (!gravitySwitch)
             {
+                GetComponent<BoxCollider2D>().size = new Vector2(15, 10);
                 rend.sprite = crouchedPlayer;
             }
         }
@@ -67,16 +70,18 @@ public class Player : MonoBehaviour
         {
             if (gravitySwitch)
             {
+                GetComponent<BoxCollider2D>().size = new Vector2(15, 20);
                 rend.sprite = flippedPlayer;
             }
             else if (!gravitySwitch)
             {
+                GetComponent<BoxCollider2D>().size = new Vector2(15, 20);
                 rend.sprite = standingPlayer;
             }
         }
     }
 
-    void OnCollisionEnter2D(Collision2D other) 
+    private void OnCollisionEnter2D(Collision2D other) 
     {
         if (other.gameObject.CompareTag("Ground"))
         {
@@ -89,6 +94,14 @@ public class Player : MonoBehaviour
         if (other.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("Obstacle"))
+        {
+            SceneManager.LoadScene(0);
         }
     }
 }
