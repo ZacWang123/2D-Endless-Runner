@@ -6,10 +6,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    Rigidbody2D rb;
+    SpriteRenderer rend;
+    Sprite flippedPlayer, crouchedPlayer, standingPlayer, flippedCrouchedPlayer;
+
     float jump = 400;
     bool gravitySwitch;
     bool isGrounded;
-    Rigidbody2D rb;
 
     private void Awake()
     {
@@ -18,7 +21,11 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-         
+        rend = GetComponent<SpriteRenderer>();
+        flippedPlayer = Resources.Load<Sprite>("Player/Flipped_Player");
+        crouchedPlayer = Resources.Load<Sprite>("Player/Crouched_Player");
+        standingPlayer = Resources.Load<Sprite>("Player/Standing_Player");
+        flippedCrouchedPlayer = Resources.Load<Sprite>("Player/Flipped_Crouched_Player");
     }
 
     void Update()
@@ -32,8 +39,40 @@ public class Player : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
             gravitySwitch = !gravitySwitch;
+            if (gravitySwitch)
+            {
+                rend.sprite = flippedPlayer;
+            }
+            else if (!gravitySwitch)
+            {
+                rend.sprite = standingPlayer;
+            }
             rb.gravityScale = rb.gravityScale * -1;
             jump = jump * -1;
+        }
+
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            if (gravitySwitch)
+            {
+                rend.sprite = flippedCrouchedPlayer;
+            }
+            else if (!gravitySwitch)
+            {
+                rend.sprite = crouchedPlayer;
+            }
+        }
+
+        if (Input.GetKeyUp(KeyCode.S))
+        {
+            if (gravitySwitch)
+            {
+                rend.sprite = flippedPlayer;
+            }
+            else if (!gravitySwitch)
+            {
+                rend.sprite = standingPlayer;
+            }
         }
     }
 
