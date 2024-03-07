@@ -11,7 +11,7 @@ public class Player : MonoBehaviour
     SpriteRenderer rend;
     Sprite flippedPlayer, crouchedPlayer, standingPlayer, flippedCrouchedPlayer;
 
-    public float jump = 300;
+    public float jump = 260;
     public bool gravitySwitch;
     public bool isGrounded;
 
